@@ -1,0 +1,12 @@
+// 100 um2 surface area
+// plus passive conductance identical to HH leak
+
+create soma
+access soma
+soma {
+  diam = 10
+  L = 100/diam/PI
+  insert pas
+  g_pas = 0.0003
+  e_pas = -54.4
+}

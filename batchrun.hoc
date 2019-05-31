@@ -1,0 +1,36 @@
+////////// Emulate Fig. 2 //////////
+
+strdef lbl
+objref vvec, tmpvec, traces, areas, g
+vvec = new Vector()
+soma vvec.record(&v(0.5))
+
+proc batchrun() { local ii
+  traces = new List()
+  areas = new Vector()
+  tstop = 500
+  for case (&Area, 10, 50, 100, 200) {
+    print Area
+    setarea()
+    run()
+
+    tmpvec = vvec.c
+    sprint(lbl,"%d",Area)
+    tmpvec.label(lbl)
+
+    traces.append(tmpvec)
+    areas.append(Area)
+  }
+  tmpvec = new Vector()
+  // scale and plot traces
+  g = new Graph()
+  for ii=0,traces.count()-1 {
+    traces.object(ii).sub(v_init)
+    traces.object(ii).div(150)
+    traces.object(ii).add(traces.count()-ii-0.5)
+    traces.object(ii).line(g,dt)
+  }
+  g.xaxis(3)  // no axes
+  g.xaxis(0,tstop)
+  g.size(0,tstop,-0.5,traces.count())
+}

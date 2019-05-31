@@ -1,0 +1,67 @@
+/*
+This NEURON implementation qualitatively reproduces the phenomena described in 
+Chow, C.C. and White, J.A.
+Spontaneous action potentials due to channel fluctuations.
+Biophysical Journal 71:3013-3021, 1996
+
+An exact reproduction of their figures is not possible for the following reasons:
+--differences in the pseudorandom number generators
+--differences in numerical integration methods
+--differences in the algorithms used to govern channel state 
+  transitions
+
+When first loaded, this code automatically emulates part of Figure 2.
+With minor modifications, it can be used to generate data for Figures 1, 3, and 4; 
+however, note that this will require prolonged, repeated simulations.
+
+On a 2 GHz PC, ~1600 seconds are needed to simulate 30 seconds of activity 
+in a 100 um2 patch of membrane.
+*/
+
+load_file("nrngui.hoc")
+
+
+////////// Specification of Biological Properties //////////
+
+load_file("cell100.hoc")	// basic passive model
+load_file("channels.ses")	// voltage-gated stochastic channels 
+                                // implemented with the Channel Builder
+
+/*
+                          Assumed
+Ionic        Conductance  channel  Single channel
+conductance  density      density  conductance
+gna          0.12 S/cm2   60/um2   2e-5 uS
+gk           0.036 S/cm2  18/um2   2e-5 uS
+*/
+
+Area = 100 // um2
+
+// argument should be desired area in um2
+proc setarea() {
+	L = Area/diam/PI
+	DDINa[0].Nsingle = 60 * Area
+	ddhhkp[0].Nsingle = 18 * Area
+}
+
+setarea()
+
+{
+xpanel("Set Area", 0)
+xvalue("Area (um2)","Area", 1,"setarea()", 0, 1 )
+xpanel(431,392)
+}
+
+
+////////// Simulation Control and Graphical Displays //////////
+
+load_file("rig.ses")	// run control and v vs. t
+
+// Emulate Fig. 2
+
+load_file("batchrun.hoc")
+
+print "Emulating Fig. 2"
+print "This takes about 100 seconds on a 2 GHz PC."
+
+batchrun()
